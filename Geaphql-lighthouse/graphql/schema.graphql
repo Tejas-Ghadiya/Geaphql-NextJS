@@ -1,0 +1,114 @@
+# This file defines the GraphQL schema for a simple user and post management system with authentication.
+scalar Upload @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Upload")
+
+# GraphQL schema definition for a simple user and post management system with authentication
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  created_at: String!
+  updated_at: String!
+}
+
+type Post {
+  id: ID!
+  user_id: ID!
+  title: String!
+  content: String!
+  image: String! # URL of the uploaded image
+  created_at: String!
+  updated_at: String!
+}
+
+# Queries for fetching user and post data
+type Query {
+  me: User 
+    @guard(with: ["sanctum"])
+    @auth
+
+  users: [User!]! @paginate
+
+  UserPosts: [Post!]! 
+    @guard(with: ["sanctum"])
+    @paginate(resolver: "App\\GraphQL\\Queries\\UserPostsQuery")
+
+  posts: [Post!]! @paginate
+
+  
+  GetPostById(id: ID! @eq): Post
+    @guard(with: ["sanctum"])
+    @find(model: "App\\Models\\Post")
+
+  GetPostsGestUser(id: ID! @eq): Post
+    @find(model: "App\\Models\\Post")
+}
+
+# Payload type for authentication responses
+type AuthPayload {
+  access_token: String!
+  user: User!
+}
+
+# Mutations for user authentication and post management
+type Mutation {
+  # Authentication Mutations
+  Register( input: RegisterInput! ): AuthPayload!
+    @field(resolver: "App\\GraphQL\\Mutations\\RegisterMutation")
+
+  Login( input: LoginInput! ): AuthPayload!
+    @field(resolver: "App\\GraphQL\\Mutations\\LoginMutation")
+
+  Logout: Boolean!
+    @guard(with: ["sanctum"])
+    @field(resolver: "App\\GraphQL\\Mutations\\LogoutMutation")
+
+    # Post Mutations
+  CreatePost( input: CreatePostInput! ): Post!
+    @guard(with: ["sanctum"])
+    @field(resolver: "App\\GraphQL\\Mutations\\CreatePostMutation")
+
+  UpdatePost( input: UpdatePostInput! ): Post!
+    @guard(with: ["sanctum"])
+    @field(resolver: "App\\GraphQL\\Mutations\\UpdatePostMutation")
+
+  DeletePost( input: DeletePostInput! ): Boolean!
+    @guard(with: ["sanctum"])
+    @field(resolver: "App\\GraphQL\\Mutations\\DeletePostMutation")
+
+  
+}
+
+# input types for user registration and login
+input RegisterInput {
+  name: String!
+  email: String!
+  password: String!
+  confirm_password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input CreatePostInput {
+  user_id: ID!
+  title: String!
+  content: String!
+  image: Upload! # Required field for creating a new post with an image.
+}
+
+input UpdatePostInput {
+  id: ID!
+  title: String
+  content: String 
+  image: Upload! # Optional field for updating the post image. If not provided, the existing image will be retained.
+}
+
+input DeletePostInput {
+  id: ID!
+}
+
+input GetPostByIdInput {
+  id: ID!
+}

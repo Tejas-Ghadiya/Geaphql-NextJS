@@ -1,0 +1,830 @@
+{
+  "info": {
+    "_postman_id": "015f8b8c-5b84-4a18-9cd4-040db72890c0",
+    "name": "Graphql",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "42926235"
+  },
+  "item": [
+    {
+      "name": "Login user",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let jsonData = pm.response.json();\r",
+              "\r",
+              "// extract token from GraphQL response\r",
+              "let token = jsonData.data?.Login?.access_token;\r",
+              "\r",
+              "// save to environment\r",
+              "pm.environment.set(\"authToken\", token);\r",
+              "\r",
+              "console.log(\"Saved Token:\", token);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation LoginUser( $input: LoginInput! ){\r\n    Login( input: $input ){\r\n        access_token\r\n        user{\r\n            id\r\n            name\r\n            email\r\n            created_at\r\n        }\r\n    }\r\n}",
+            "variables": "{\r\n  \"input\": {\r\n    \"email\": \"test1@gmail.com\",\r\n    \"password\": \"123456\"\r\n  }\r\n}"
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/graphql",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "Login user",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation LoginUser( $input: LoginInput! ){\r\n    Login( input: $input ){\r\n        access_token\r\n        user{\r\n            id\r\n            name\r\n            email\r\n            created_at\r\n        }\r\n    }\r\n}",
+                "variables": "{\r\n  \"input\": {\r\n    \"email\": \"test1@gmail.com\",\r\n    \"password\": \"123456\"\r\n  }\r\n}"
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/graphql",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "Host",
+              "value": "127.0.0.1:8000"
+            },
+            {
+              "key": "Connection",
+              "value": "close"
+            },
+            {
+              "key": "X-Powered-By",
+              "value": "PHP/8.4.15"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, private"
+            },
+            {
+              "key": "Date",
+              "value": "Fri, 17 Apr 2026 13:19:09 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"data\": {\n        \"Login\": {\n            \"access_token\": \"9|t1qygAkTq4DbCCh3QrMubYx4iY6BVmLiB2E5nPbZ60c706ab\",\n            \"user\": {\n                \"id\": \"1\",\n                \"name\": \"test1\",\n                \"email\": \"test1@gmail.com\",\n                \"created_at\": \"2026-04-17 11:23:01\"\n            }\n        }\n    }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Register user",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let jsonData = pm.response.json();\r",
+              "\r",
+              "// extract token from GraphQL response\r",
+              "let token = jsonData.data?.Register?.access_token;\r",
+              "\r",
+              "// save to environment\r",
+              "pm.environment.set(\"authToken\", token);\r",
+              "\r",
+              "console.log(\"Saved Token:\", token);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation RegisterUser($input: RegisterInput!) {\r\n  Register(input: $input) {\r\n    access_token\r\n    user {\r\n      id\r\n      name\r\n      email\r\n      created_at\r\n    }\r\n  }\r\n}",
+            "variables": "{\r\n  \"input\": {\r\n    \"name\": \"test1\",\r\n    \"email\": \"test1@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"confirm_password\": \"123456\"\r\n  }\r\n}"
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/graphql",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Logout user",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation {\r\n  Logout\r\n}",
+            "variables": ""
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/graphql",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create new post",
+      "request": {
+        "auth": {
+          "type": "inherit"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}",
+            "type": "text",
+            "id": 0
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "operations",
+              "value": "{  \"query\": \"mutation CreatePost($input: CreatePostInput!) { CreatePost(input: $input) { id title content image } }\",  \"variables\": {    \"input\": {      \"user_id\": 1,      \"title\": \"Test Post\",      \"content\": \"Test Content\",      \"image\": null    }  }}",
+              "type": "text",
+              "id": 0
+            },
+            {
+              "key": "map",
+              "value": "{  \"0\": [\"variables.input.image\"]}",
+              "type": "text",
+              "id": 1
+            },
+            {
+              "key": "0",
+              "type": "file",
+              "id": 2,
+              "fileUploadError": "",
+              "src": [
+                "c:\\Users\\ADMIN\\Downloads\\Orders — eBay Seller Hub - 17 - 4.png"
+              ]
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/graphql",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update post",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "name": "authorization",
+            "sortOrder": 0,
+            "infoTitle": "This header was automatically added",
+            "info": "This header is added because of the authorization method used for this request.\n\nThe value of this header is tentative. You can find the exact value in the console once the request is sent.\n\nUse the authorization tab to remove authorization or to change the value of this header.",
+            "allowedToToggle": false,
+            "disableEdit": true,
+            "previewSettingsLink": "Go to authorization",
+            "key": "Authorization",
+            "value": "Bearer 1|oVat76dl0mwVn8HM9rhQpwMwI0QYrO9dwMnvI2rre4477a25",
+            "system": true,
+            "auth": true,
+            "type": "text"
+          },
+          {
+            "name": "cache-control",
+            "sortOrder": 2,
+            "infoTitle": "We recommend using this header",
+            "info": "Postman added \"Cache-Control: no-cache\" as a precautionary measure to prevent the server from returning stale response when one makes repeated requests.\n\nYou can remove this header in the app settings or enter a new one with a different value.",
+            "allowedToToggle": false,
+            "disableEdit": true,
+            "previewSettingsLink": "Go to settings",
+            "key": "Cache-Control",
+            "value": "no-cache",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "postman-token",
+            "sortOrder": 3,
+            "infoTitle": "We recommend using this header",
+            "info": "The Postman-Token header appends a random UUID to every outgoing request. Postman adds this header for API developers to better debug requests sent and to ensure separate requests appear distinct to the receiving server.\n\nYou can remove this header in the app settings.",
+            "allowedToToggle": false,
+            "disableEdit": true,
+            "previewSettingsLink": "Go to settings",
+            "key": "Postman-Token",
+            "value": "<calculated when request is sent>",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "content-type",
+            "sortOrder": 4,
+            "infoTitle": "This header was automatically added",
+            "info": "The Content-Type header is added to help the server identify the media type of the request body that is present in this request.\n\nUse the request body tab to control the value or to remove this header.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "previewSettingsLink": "Go to body",
+            "key": "Content-Type",
+            "value": "multipart/form-data; boundary=<calculated when request is sent>",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "content-length",
+            "sortOrder": 5,
+            "infoTitle": "This header was automatically added",
+            "info": "The Content-Length header was added to indicate to the server the size of the request body that is added to this request. Server uses this value to parse the request body accurately.\n\nYou can remove the header or enter a new one with a different value.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "previewSettingsLink": "Go to body",
+            "key": "Content-Length",
+            "value": "<calculated when request is sent>",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "host",
+            "sortOrder": 6,
+            "infoTitle": "We recommend using this header",
+            "info": "The Host header is added to identify the domain name for which a request is being sent to the server. This header is implicitly sent by every HTTP client.\n\nYou can remove the header or enter a new one with a different value. It is most likely that without this header, your request will return an HTTP 400 error.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "Host",
+            "value": "<calculated when request is sent>",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "user-agent",
+            "sortOrder": 7,
+            "infoTitle": "We recommend using this header",
+            "info": "The User-Agent header is added to help the server identify Postman as the HTTP requesting application or client.\n\nIt is recommended that this header be sent, but you can remove the header or enter a new one with a different value.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "User-Agent",
+            "value": "PostmanRuntime/7.39.1",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "accept",
+            "sortOrder": 8,
+            "infoTitle": "We recommend using this header",
+            "info": "The \"Accept: */*\" header is added to tell the server that Postman can understand and process all forms of response content types.\n\nIt is recommended that this header be sent, but you can remove the header or enter a new one with a different value.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "Accept",
+            "value": "*/*",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "accept-encoding",
+            "sortOrder": 9,
+            "infoTitle": "We recommend using this header",
+            "info": "The Accept-Encoding header is added to indicate to the server that Postman HTTP client supports a defined list of content-encoding or compression algorithms as response.\n\nYou can remove the header or enter a new one with a different value. Doing that may not accurately render the response within the app.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "Accept-Encoding",
+            "value": "gzip, deflate, br",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "connection",
+            "sortOrder": 10,
+            "infoTitle": "We recommend using this header",
+            "info": "Postman added the Connection header to indicate the server to keep the underlying network connection open once the current response is received. This allows Postman to reuse the same connection for faster response times in subsequent requests to the same server.\n\nYou can remove this header or enter a new one with a different value, such as `Connection: Close` to control this behaviour.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "Connection",
+            "value": "keep-alive",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}",
+            "type": "text",
+            "id": 0
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "operations",
+              "value": "{  \"query\": \"mutation UpdatePost($input: UpdatePostInput!) { UpdatePost(input: $input) { id title content image created_at } }\",  \"variables\": {    \"input\": {      \"id\": 30,      \"title\": \"Updated Title\",      \"content\": \"Updated Content\",      \"image\": null    }  }}",
+              "type": "text",
+              "id": 0
+            },
+            {
+              "key": "map",
+              "value": "{  \"0\": [\"variables.input.image\"]}",
+              "type": "text",
+              "id": 1
+            },
+            {
+              "key": "0",
+              "type": "file",
+              "id": 2,
+              "fileUploadError": "",
+              "src": [
+                "c:\\Users\\ADMIN\\Downloads\\Orders — eBay Seller Hub - 17 - 4.png"
+              ]
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/graphql",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete post",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "name": "cache-control",
+            "sortOrder": 2,
+            "infoTitle": "We recommend using this header",
+            "info": "Postman added \"Cache-Control: no-cache\" as a precautionary measure to prevent the server from returning stale response when one makes repeated requests.\n\nYou can remove this header in the app settings or enter a new one with a different value.",
+            "allowedToToggle": false,
+            "disableEdit": true,
+            "previewSettingsLink": "Go to settings",
+            "key": "Cache-Control",
+            "value": "no-cache",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "postman-token",
+            "sortOrder": 3,
+            "infoTitle": "We recommend using this header",
+            "info": "The Postman-Token header appends a random UUID to every outgoing request. Postman adds this header for API developers to better debug requests sent and to ensure separate requests appear distinct to the receiving server.\n\nYou can remove this header in the app settings.",
+            "allowedToToggle": false,
+            "disableEdit": true,
+            "previewSettingsLink": "Go to settings",
+            "key": "Postman-Token",
+            "value": "<calculated when request is sent>",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "content-type",
+            "sortOrder": 4,
+            "infoTitle": "This header was automatically added",
+            "info": "The Content-Type header is added to help the server identify the media type of the request body that is present in this request.\n\nUse the request body tab to control the value or to remove this header.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "previewSettingsLink": "Go to body",
+            "key": "Content-Type",
+            "value": "application/json",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "content-length",
+            "sortOrder": 5,
+            "infoTitle": "This header was automatically added",
+            "info": "The Content-Length header was added to indicate to the server the size of the request body that is added to this request. Server uses this value to parse the request body accurately.\n\nYou can remove the header or enter a new one with a different value.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "previewSettingsLink": "Go to body",
+            "key": "Content-Length",
+            "value": "<calculated when request is sent>",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "host",
+            "sortOrder": 6,
+            "infoTitle": "We recommend using this header",
+            "info": "The Host header is added to identify the domain name for which a request is being sent to the server. This header is implicitly sent by every HTTP client.\n\nYou can remove the header or enter a new one with a different value. It is most likely that without this header, your request will return an HTTP 400 error.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "Host",
+            "value": "<calculated when request is sent>",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "user-agent",
+            "sortOrder": 7,
+            "infoTitle": "We recommend using this header",
+            "info": "The User-Agent header is added to help the server identify Postman as the HTTP requesting application or client.\n\nIt is recommended that this header be sent, but you can remove the header or enter a new one with a different value.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "User-Agent",
+            "value": "PostmanRuntime/7.39.1",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "accept",
+            "sortOrder": 8,
+            "infoTitle": "We recommend using this header",
+            "info": "The \"Accept: */*\" header is added to tell the server that Postman can understand and process all forms of response content types.\n\nIt is recommended that this header be sent, but you can remove the header or enter a new one with a different value.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "Accept",
+            "value": "*/*",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "accept-encoding",
+            "sortOrder": 9,
+            "infoTitle": "We recommend using this header",
+            "info": "The Accept-Encoding header is added to indicate to the server that Postman HTTP client supports a defined list of content-encoding or compression algorithms as response.\n\nYou can remove the header or enter a new one with a different value. Doing that may not accurately render the response within the app.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "Accept-Encoding",
+            "value": "gzip, deflate, br",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "connection",
+            "sortOrder": 10,
+            "infoTitle": "We recommend using this header",
+            "info": "Postman added the Connection header to indicate the server to keep the underlying network connection open once the current response is received. This allows Postman to reuse the same connection for faster response times in subsequent requests to the same server.\n\nYou can remove this header or enter a new one with a different value, such as `Connection: Close` to control this behaviour.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "Connection",
+            "value": "keep-alive",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}",
+            "type": "text",
+            "id": 0
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation DeletePostDate( $input: DeletePostInput!){\r\n    DeletePost( input: $input )\r\n}\r\n",
+            "variables": "{\r\n    \"input\":{\r\n        \"id\": 4\r\n    }\r\n}"
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/graphql",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "User post",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "name": "cache-control",
+            "sortOrder": 2,
+            "infoTitle": "We recommend using this header",
+            "info": "Postman added \"Cache-Control: no-cache\" as a precautionary measure to prevent the server from returning stale response when one makes repeated requests.\n\nYou can remove this header in the app settings or enter a new one with a different value.",
+            "allowedToToggle": false,
+            "disableEdit": true,
+            "previewSettingsLink": "Go to settings",
+            "key": "Cache-Control",
+            "value": "no-cache",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "postman-token",
+            "sortOrder": 3,
+            "infoTitle": "We recommend using this header",
+            "info": "The Postman-Token header appends a random UUID to every outgoing request. Postman adds this header for API developers to better debug requests sent and to ensure separate requests appear distinct to the receiving server.\n\nYou can remove this header in the app settings.",
+            "allowedToToggle": false,
+            "disableEdit": true,
+            "previewSettingsLink": "Go to settings",
+            "key": "Postman-Token",
+            "value": "<calculated when request is sent>",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "content-type",
+            "sortOrder": 4,
+            "infoTitle": "This header was automatically added",
+            "info": "The Content-Type header is added to help the server identify the media type of the request body that is present in this request.\n\nUse the request body tab to control the value or to remove this header.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "previewSettingsLink": "Go to body",
+            "key": "Content-Type",
+            "value": "application/json",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "content-length",
+            "sortOrder": 5,
+            "infoTitle": "This header was automatically added",
+            "info": "The Content-Length header was added to indicate to the server the size of the request body that is added to this request. Server uses this value to parse the request body accurately.\n\nYou can remove the header or enter a new one with a different value.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "previewSettingsLink": "Go to body",
+            "key": "Content-Length",
+            "value": "<calculated when request is sent>",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "host",
+            "sortOrder": 6,
+            "infoTitle": "We recommend using this header",
+            "info": "The Host header is added to identify the domain name for which a request is being sent to the server. This header is implicitly sent by every HTTP client.\n\nYou can remove the header or enter a new one with a different value. It is most likely that without this header, your request will return an HTTP 400 error.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "Host",
+            "value": "<calculated when request is sent>",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "user-agent",
+            "sortOrder": 7,
+            "infoTitle": "We recommend using this header",
+            "info": "The User-Agent header is added to help the server identify Postman as the HTTP requesting application or client.\n\nIt is recommended that this header be sent, but you can remove the header or enter a new one with a different value.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "User-Agent",
+            "value": "PostmanRuntime/7.39.1",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "accept",
+            "sortOrder": 8,
+            "infoTitle": "We recommend using this header",
+            "info": "The \"Accept: */*\" header is added to tell the server that Postman can understand and process all forms of response content types.\n\nIt is recommended that this header be sent, but you can remove the header or enter a new one with a different value.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "Accept",
+            "value": "*/*",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "accept-encoding",
+            "sortOrder": 9,
+            "infoTitle": "We recommend using this header",
+            "info": "The Accept-Encoding header is added to indicate to the server that Postman HTTP client supports a defined list of content-encoding or compression algorithms as response.\n\nYou can remove the header or enter a new one with a different value. Doing that may not accurately render the response within the app.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "Accept-Encoding",
+            "value": "gzip, deflate, br",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "name": "connection",
+            "sortOrder": 10,
+            "infoTitle": "We recommend using this header",
+            "info": "Postman added the Connection header to indicate the server to keep the underlying network connection open once the current response is received. This allows Postman to reuse the same connection for faster response times in subsequent requests to the same server.\n\nYou can remove this header or enter a new one with a different value, such as `Connection: Close` to control this behaviour.",
+            "allowedToToggle": true,
+            "disableEdit": true,
+            "key": "Connection",
+            "value": "keep-alive",
+            "system": true,
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}",
+            "type": "text",
+            "id": 0
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query {\r\n  UserPosts(first: 10, page: 1) {\r\n    data {\r\n      id\r\n      title\r\n      content\r\n      user_id\r\n      created_at\r\n    }\r\n    paginatorInfo {\r\n      currentPage\r\n      lastPage\r\n      perPage\r\n      total\r\n      hasMorePages\r\n    }\r\n  }\r\n}",
+            "variables": ""
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/graphql",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "All posts",
+      "request": {
+        "auth": {
+          "type": "inherit"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query {\r\n  posts(first: 10, page: 1) {\r\n    data {\r\n      id\r\n      title\r\n      content\r\n      user_id\r\n      created_at\r\n    }\r\n    paginatorInfo {\r\n      currentPage\r\n      lastPage\r\n      perPage\r\n      total\r\n      hasMorePages\r\n    }\r\n  }\r\n}",
+            "variables": ""
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/graphql",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "All user",
+      "request": {
+        "auth": {
+          "type": "inherit"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query {\r\n  users(first: 10, page: 1) {\r\n    data {\r\n      id\r\n      name\r\n      email\r\n      created_at\r\n    }\r\n    paginatorInfo {\r\n      currentPage\r\n      lastPage\r\n      total\r\n    }\r\n  }\r\n}",
+            "variables": ""
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/graphql",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
