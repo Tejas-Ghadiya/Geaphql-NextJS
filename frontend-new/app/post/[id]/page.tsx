@@ -78,7 +78,7 @@ export default function PostPage() {
         {post.image && !imageError && (
           <div className="relative w-full h-96 bg-gray-200">
             <img
-              src={post.image}
+              src={`http://localhost:8000${post.image}`}
               alt={post.title}
               className="w-full h-full object-cover"
               onError={() => setImageError(true)}

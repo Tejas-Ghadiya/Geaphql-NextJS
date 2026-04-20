@@ -1,20 +1,27 @@
 <?php declare(strict_types=1);
 
 namespace App\GraphQL\Queries;
+
 use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
 
 final readonly class UserPostsQuery
 {
     /** @param  array{}  $args */
-    public function __invoke(null $_, array $args)
-    {
-         $user = auth()->id();
+public function __invoke($_, array $args)
+{
+    $user = auth()->id();
 
-        if (!$user) {
-            throw new \Exception('Unauthenticated');
-        }
-        // throw new \Exception('User ID: ' . $user);
-        return Post::where('user_id', $user)
-            ->paginate($args['first'] ?? 10);
+    if (!$user) {
+        throw new \Exception('Unauthenticated');
     }
+
+    return Post::where('user_id', $user)
+        ->paginate(
+            $args['first'] ?? 10,
+            ['*'],
+            'page',
+            $args['page'] ?? 1
+        );
+}
 }

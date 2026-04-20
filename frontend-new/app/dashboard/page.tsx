@@ -6,26 +6,99 @@ import { GET_USER_POSTS } from '@/graphql/queries';
 import { DELETE_POST } from '@/graphql/mutations';
 import Link from 'next/link';
 import { Trash2, Edit } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 export default function Dashboard() {
   const { user, loading: authLoading } = useAuth();
-  const [page, setPage] = useState(1);
-  const [itemsPerPage] = useState(10); // Number of items per page
-  
-  const { data, loading, error, refetch } = useQuery(GET_USER_POSTS, {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [allPosts, setAllPosts] = useState<any[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const itemsPerPage = 5; // Number of items to load per scroll
+  const loaderRef = useRef<HTMLDivElement>(null);
+
+  const { data, loading, error, refetch, fetchMore } = useQuery(GET_USER_POSTS, {
     variables: { 
-      first: itemsPerPage,  // Required: number of items per page
-      page: page            // Optional: current page number
+      first: itemsPerPage,
+      page: 1
     },
     skip: !user,
+    fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true,
   });
-  
+
   const [deletePost] = useMutation(DELETE_POST, {
     onCompleted: () => {
-      refetch(); // Refetch posts after deletion
+      refetch();
+      setAllPosts([]);
+      setCurrentPage(1);
+      setHasMore(true);
     },
   });
+
+  // Update posts when data changes
+  useEffect(() => {
+    if (data?.UserPosts?.data) {
+      if (currentPage === 1) {
+        setAllPosts(data.UserPosts.data);
+      } else {
+        setAllPosts(prev => [...prev, ...data.UserPosts.data]);
+      }
+      setHasMore(data.UserPosts.paginatorInfo?.currentPage < data.UserPosts.paginatorInfo?.lastPage);
+    }
+  }, [data, currentPage]);
+
+  // Infinite scroll observer
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    const target = entries[0];
+    if (target.isIntersecting && hasMore && !loadingMore && !loading) {
+      loadMorePosts();
+    }
+  }, [hasMore, loadingMore, loading]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, {
+      threshold: 0.1,
+      rootMargin: '100px'
+    });
+    
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, [handleObserver]);
+
+  const loadMorePosts = async () => {
+    if (loadingMore || !hasMore) return;
+    
+    setLoadingMore(true);
+    const nextPage = currentPage + 1;
+    
+    try {
+      const result = await fetchMore({
+        variables: {
+          first: itemsPerPage,
+          page: nextPage
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return {
+            UserPosts: {
+              ...fetchMoreResult.UserPosts,
+              data: [...prev.UserPosts.data, ...fetchMoreResult.UserPosts.data]
+            }
+          };
+        }
+      });
+      
+      setCurrentPage(nextPage);
+    } catch (error) {
+      console.error('Error loading more posts:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   if (authLoading) {
     return (
@@ -55,7 +128,12 @@ export default function Dashboard() {
           <p>{error.message}</p>
         </div>
         <button
-          onClick={() => refetch()}
+          onClick={() => {
+            setAllPosts([]);
+            setCurrentPage(1);
+            setHasMore(true);
+            refetch();
+          }}
           className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
         >
           Try Again
@@ -77,7 +155,6 @@ export default function Dashboard() {
     }
   };
 
-  const posts = data?.UserPosts?.data || [];
   const paginatorInfo = data?.UserPosts?.paginatorInfo;
 
   return (
@@ -92,11 +169,11 @@ export default function Dashboard() {
         </Link>
       </div>
 
-      {loading ? (
+      {loading && currentPage === 1 ? (
         <div className="text-center py-12">
           <div className="text-gray-600">Loading posts...</div>
         </div>
-      ) : posts.length === 0 ? (
+      ) : allPosts.length === 0 ? (
         <div className="bg-white rounded-lg shadow-md p-12 text-center">
           <p className="text-gray-500 text-lg mb-4">No posts yet.</p>
           <Link
@@ -111,7 +188,7 @@ export default function Dashboard() {
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 sticky top-0">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Title
@@ -131,7 +208,7 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {posts.map((post: any) => (
+                  {allPosts.map((post: any, index: number) => (
                     <tr key={post.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
                         <div className="text-sm font-medium text-gray-900">
@@ -180,25 +257,31 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {paginatorInfo && paginatorInfo.lastPage > 1 && (
-            <div className="flex justify-center gap-2 mt-6">
-              <button
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="px-4 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition duration-200"
-              >
-                Previous
-              </button>
-              <span className="px-4 py-2 text-gray-700">
-                Page {page} of {paginatorInfo.lastPage}
-              </span>
-              <button
-                onClick={() => setPage(p => Math.min(paginatorInfo.lastPage, p + 1))}
-                disabled={page === paginatorInfo.lastPage}
-                className="px-4 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition duration-200"
-              >
-                Next
-              </button>
+          {/* Loading indicator for infinite scroll */}
+          {hasMore && (
+            <div ref={loaderRef} className="text-center py-8">
+              {loadingMore ? (
+                <div className="flex justify-center items-center gap-2">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                  <span className="text-gray-600">Loading more posts...</span>
+                </div>
+              ) : (
+                <div className="h-10"></div>
+              )}
+            </div>
+          )}
+
+          {/* End of posts message */}
+          {!hasMore && allPosts.length > 0 && (
+            <div className="text-center py-8">
+              <p className="text-gray-500 text-sm">You've reached the end! 🎉</p>
+            </div>
+          )}
+          
+          {/* Show total count */}
+          {paginatorInfo && (
+            <div className="text-center mt-4 text-sm text-gray-500">
+              Showing {allPosts.length} of {paginatorInfo.total} posts
             </div>
           )}
         </>

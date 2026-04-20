@@ -39,13 +39,12 @@ export const GET_USER_POSTS = gql`
         title
         content
         image
-        user_id
         created_at
-        updated_at
       }
       paginatorInfo {
         currentPage
         lastPage
+        perPage
         total
       }
     }
@@ -60,18 +59,18 @@ export const GET_POSTS = gql`
         title
         content
         image
-        user_id
         created_at
-        updated_at
       }
       paginatorInfo {
         currentPage
         lastPage
+        perPage
         total
       }
     }
   }
 `;
+
 
 // FIXED: Correct query structure with input object
 export const GET_POST_BY_ID = gql`
